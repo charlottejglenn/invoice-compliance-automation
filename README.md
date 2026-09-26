@@ -70,13 +70,13 @@ The records behind these tests are included in `sample-data`:
 4. **Set the spreadsheet.** Replace `YOUR_SPREADSHEET_ID` with the ID of your Google Sheet.
 5. **Choose a test case.** Replace `TEST_CASE_ID` with a sample ID such as `Test_4`, then run the scenario once.
 
-## Adapting It
+## Possible Extensions
 
 The rules live in their own sheet, so the checklist can be changed without rewriting the whole scenario. The identity threshold and approval conditions sit in separate Make modules and can be adjusted independently.
 
 For a live process, the first module could search for new, unreviewed invoices instead of a selected test case. PDFs could come straight from an inbox or shared drive. The text would be extracted first, with OCR for scanned documents, and then passed into the checks already built here.
 
-## A Note on Scope
+## Scope
 
 This version focuses on the review itself. It does not extract invoice data from PDFs or post approved invoices to an accounting system, and it is not intended as a legal or accounting control.
 
