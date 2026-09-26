@@ -1,0 +1,11 @@
+ID,Regelbezeichnung,Pflichtangabe nach § 14 UStG
+R1,Absender,Vollständiger Name und Anschrift des leistenden Unternehmers
+R2,Empfänger,Vollständiger Name und Anschrift des Leistungsempfängers
+R3,Steuernummer,Steuernummer oder Umsatzsteuer-Identifikationsnummer
+R4,Datum,Ausstellungsdatum der Rechnung
+R5,Rechnungsnummer,"Einmalige, fortlaufende Nummer"
+R6,Menge/Art,Menge und Art der gelieferten Gegenstände oder Leistung
+R7,Zeitpunkt,Zeitpunkt der Lieferung oder Leistung
+R8,Entgelt,Nach Steuersätzen aufgeschlüsseltes Entgelt
+R9,Steuersatz,Anzuwendender Steuersatz (z. B. 19% oder 7%)
+R10,Steuerbetrag,Der auf das Entgelt entfallende Steuerbetrag

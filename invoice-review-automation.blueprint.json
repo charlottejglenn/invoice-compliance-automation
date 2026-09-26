@@ -1,0 +1,1755 @@
+{
+    "name": "Automated Invoice Review",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-sheets:filterRows",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": null
+            },
+            "mapper": {
+                "from": "drive",
+                "limit": "1",
+                "filter": [
+                    [
+                        {
+                            "a": "A",
+          "b": "TEST_CASE_ID",
+                            "o": "text:equal"
+                        }
+                    ]
+                ],
+                "sheetId": "Rechnungen",
+                "sortOrder": "asc",
+                "spreadsheetId": "YOUR_SPREADSHEET_ID",
+                "tableFirstRow": "A1:Z1",
+                "includesHeaders": true,
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "Load invoice"
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "Select from My Drive"
+                        },
+                        "orderBy": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "sheetId": {
+                            "mode": "chose",
+                            "label": "Rechnungen"
+                        },
+                        "sortOrder": {
+                            "mode": "chose",
+                            "label": "Ascending"
+                        },
+                        "spreadsheetId": {
+                            "mode": "chose",
+                            "label": "Invoice Review Data"
+                        },
+                        "tableFirstRow": {
+                            "label": "A-Z"
+                        },
+                        "includesHeaders": {
+                            "mode": "chose",
+                            "label": "Yes"
+                        },
+                        "valueRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted value"
+                        },
+                        "dateTimeRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted string"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "Google connection"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "valueRenderOption",
+                        "type": "select",
+                        "label": "Value render option",
+                        "validate": {
+                            "enum": [
+                                "FORMATTED_VALUE",
+                                "UNFORMATTED_VALUE",
+                                "FORMULA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "dateTimeRenderOption",
+                        "type": "select",
+                        "label": "Date and time render option",
+                        "validate": {
+                            "enum": [
+                                "SERIAL_NUMBER",
+                                "FORMATTED_STRING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit"
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "select",
+                        "label": "Spreadsheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tableFirstRow",
+                        "type": "select",
+                        "label": "Column range",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "A1:Z1",
+                                "A1:BZ1",
+                                "A1:CZ1",
+                                "A1:DZ1",
+                                "A1:MZ1",
+                                "A1:ZZ1",
+                                "A1:AZZ1",
+                                "A1:BZZ1",
+                                "A1:CZZ1",
+                                "A1:DZZ1",
+                                "A1:MZZ1",
+                                "A1:ZZZ1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "type": "filter",
+                        "label": "Filter",
+                        "options": "rpc://google-sheets/2/rpcGetFilterKeys?includesHeaders=true"
+                    },
+                    {
+                        "name": "orderBy",
+                        "type": "select",
+                        "label": "Order by"
+                    },
+                    {
+                        "name": "sortOrder",
+                        "type": "select",
+                        "label": "Sort order",
+                        "validate": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__IMTLENGTH__",
+                        "label": "Total number of bundles",
+                        "type": "uinteger"
+                    },
+                    {
+                        "name": "__IMTINDEX__",
+                        "label": "Bundle order position",
+                        "type": "uinteger"
+                    },
+                    {
+                        "name": "__ROW_NUMBER__",
+                        "type": "number",
+                        "label": "Row number"
+                    },
+                    {
+                        "name": "__SPREADSHEET_ID__",
+                        "type": "text",
+                        "label": "Spreadsheet ID"
+                    },
+                    {
+                        "name": "__SHEET__",
+                        "type": "text",
+                        "label": "Sheet"
+                    },
+                    {
+                        "name": "0",
+                        "type": "text",
+                        "label": "Case_ID (A)"
+                    },
+                    {
+                        "name": "1",
+                        "type": "text",
+                        "label": "Rechnungs_Nr (B)"
+                    },
+                    {
+                        "name": "2",
+                        "type": "text",
+                        "label": "Absender_Name (C)"
+                    },
+                    {
+                        "name": "3",
+                        "type": "text",
+                        "label": "Bezogene_Auftrags_ID (D)"
+                    },
+                    {
+                        "name": "4",
+                        "type": "text",
+                        "label": "Ist_Menge (E)"
+                    },
+                    {
+                        "name": "5",
+                        "type": "text",
+                        "label": "Summe_Netto (F)"
+                    },
+                    {
+                        "name": "6",
+                        "type": "text",
+                        "label": "Rechnungstext (G)"
+                    },
+                    {
+                        "name": "7",
+                        "type": "text",
+                        "label": "Rechtspruefung (H)"
+                    },
+                    {
+                        "name": "8",
+                        "type": "text",
+                        "label": "Identitaets_Score (I)"
+                    },
+                    {
+                        "name": "9",
+                        "type": "text",
+                        "label": "Mengenpruefung (J)"
+                    },
+                    {
+                        "name": "10",
+                        "type": "text",
+                        "label": "Entscheidung (K)"
+                    },
+                    {
+                        "name": "11",
+                        "type": "text",
+                        "label": "Entscheidungsgrund (L)"
+                    },
+                    {
+                        "name": "12",
+                        "type": "text",
+                        "label": "Manuelle_Pruefung (M)"
+                    },
+                    {
+                        "name": "13",
+                        "type": "text",
+                        "label": "Geprueft_am (N)"
+                    },
+                    {
+                        "name": "14",
+                        "type": "text",
+                        "label": "(O)"
+                    },
+                    {
+                        "name": "15",
+                        "type": "text",
+                        "label": "(P)"
+                    },
+                    {
+                        "name": "16",
+                        "type": "text",
+                        "label": "(Q)"
+                    },
+                    {
+                        "name": "17",
+                        "type": "text",
+                        "label": "(R)"
+                    },
+                    {
+                        "name": "18",
+                        "type": "text",
+                        "label": "(S)"
+                    },
+                    {
+                        "name": "19",
+                        "type": "text",
+                        "label": "(T)"
+                    },
+                    {
+                        "name": "20",
+                        "type": "text",
+                        "label": "(U)"
+                    },
+                    {
+                        "name": "21",
+                        "type": "text",
+                        "label": "(V)"
+                    },
+                    {
+                        "name": "22",
+                        "type": "text",
+                        "label": "(W)"
+                    },
+                    {
+                        "name": "23",
+                        "type": "text",
+                        "label": "(X)"
+                    },
+                    {
+                        "name": "24",
+                        "type": "text",
+                        "label": "(Y)"
+                    },
+                    {
+                        "name": "25",
+                        "type": "text",
+                        "label": "(Z)"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "google-sheets:filterRows",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": null
+            },
+            "mapper": {
+                "from": "drive",
+                "limit": "1",
+                "filter": [
+                    [
+                        {
+                            "a": "A",
+                            "b": "{{1.`3`}}",
+                            "o": "text:equal"
+                        }
+                    ]
+                ],
+                "sheetId": "Auftraege",
+                "sortOrder": "asc",
+                "spreadsheetId": "YOUR_SPREADSHEET_ID",
+                "tableFirstRow": "A1:Z1",
+                "includesHeaders": true,
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "Find related order"
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "Select from My Drive"
+                        },
+                        "orderBy": {
+                            "mode": "chose"
+                        },
+                        "sheetId": {
+                            "mode": "chose",
+                            "label": "Auftraege"
+                        },
+                        "sortOrder": {
+                            "mode": "chose",
+                            "label": "Ascending"
+                        },
+                        "spreadsheetId": {
+                            "mode": "chose",
+                            "label": "Invoice Review Data"
+                        },
+                        "tableFirstRow": {
+                            "label": "A-Z"
+                        },
+                        "includesHeaders": {
+                            "mode": "chose",
+                            "label": "Yes"
+                        },
+                        "valueRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted value"
+                        },
+                        "dateTimeRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted string"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "Google connection"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "valueRenderOption",
+                        "type": "select",
+                        "label": "Value render option",
+                        "validate": {
+                            "enum": [
+                                "FORMATTED_VALUE",
+                                "UNFORMATTED_VALUE",
+                                "FORMULA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "dateTimeRenderOption",
+                        "type": "select",
+                        "label": "Date and time render option",
+                        "validate": {
+                            "enum": [
+                                "SERIAL_NUMBER",
+                                "FORMATTED_STRING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit"
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "select",
+                        "label": "Spreadsheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tableFirstRow",
+                        "type": "select",
+                        "label": "Column range",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "A1:Z1",
+                                "A1:BZ1",
+                                "A1:CZ1",
+                                "A1:DZ1",
+                                "A1:MZ1",
+                                "A1:ZZ1",
+                                "A1:AZZ1",
+                                "A1:BZZ1",
+                                "A1:CZZ1",
+                                "A1:DZZ1",
+                                "A1:MZZ1",
+                                "A1:ZZZ1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "type": "filter",
+                        "label": "Filter",
+                        "options": "rpc://google-sheets/2/rpcGetFilterKeys?includesHeaders=true"
+                    },
+                    {
+                        "name": "orderBy",
+                        "type": "select",
+                        "label": "Order by"
+                    },
+                    {
+                        "name": "sortOrder",
+                        "type": "select",
+                        "label": "Sort order",
+                        "validate": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__IMTLENGTH__",
+                        "type": "uinteger",
+                        "label": "Total number of bundles"
+                    },
+                    {
+                        "name": "__IMTINDEX__",
+                        "type": "uinteger",
+                        "label": "Bundle order position"
+                    },
+                    {
+                        "name": "__ROW_NUMBER__",
+                        "type": "number",
+                        "label": "Row number"
+                    },
+                    {
+                        "name": "__SPREADSHEET_ID__",
+                        "type": "text",
+                        "label": "Spreadsheet ID"
+                    },
+                    {
+                        "name": "__SHEET__",
+                        "type": "text",
+                        "label": "Sheet"
+                    },
+                    {
+                        "name": "0",
+                        "type": "text",
+                        "label": "Auftrag_ID (A)"
+                    },
+                    {
+                        "name": "1",
+                        "type": "text",
+                        "label": "Kunde (B)"
+                    },
+                    {
+                        "name": "2",
+                        "type": "text",
+                        "label": "Position (C)"
+                    },
+                    {
+                        "name": "3",
+                        "type": "text",
+                        "label": "Soll_Menge (D)"
+                    },
+                    {
+                        "name": "4",
+                        "type": "text",
+                        "label": "Einzelpreis_Netto (E)"
+                    },
+                    {
+                        "name": "5",
+                        "type": "text",
+                        "label": "(F)"
+                    },
+                    {
+                        "name": "6",
+                        "type": "text",
+                        "label": "(G)"
+                    },
+                    {
+                        "name": "7",
+                        "type": "text",
+                        "label": "(H)"
+                    },
+                    {
+                        "name": "8",
+                        "type": "text",
+                        "label": "(I)"
+                    },
+                    {
+                        "name": "9",
+                        "type": "text",
+                        "label": "(J)"
+                    },
+                    {
+                        "name": "10",
+                        "type": "text",
+                        "label": "(K)"
+                    },
+                    {
+                        "name": "11",
+                        "type": "text",
+                        "label": "(L)"
+                    },
+                    {
+                        "name": "12",
+                        "type": "text",
+                        "label": "(M)"
+                    },
+                    {
+                        "name": "13",
+                        "type": "text",
+                        "label": "(N)"
+                    },
+                    {
+                        "name": "14",
+                        "type": "text",
+                        "label": "(O)"
+                    },
+                    {
+                        "name": "15",
+                        "type": "text",
+                        "label": "(P)"
+                    },
+                    {
+                        "name": "16",
+                        "type": "text",
+                        "label": "(Q)"
+                    },
+                    {
+                        "name": "17",
+                        "type": "text",
+                        "label": "(R)"
+                    },
+                    {
+                        "name": "18",
+                        "type": "text",
+                        "label": "(S)"
+                    },
+                    {
+                        "name": "19",
+                        "type": "text",
+                        "label": "(T)"
+                    },
+                    {
+                        "name": "20",
+                        "type": "text",
+                        "label": "(U)"
+                    },
+                    {
+                        "name": "21",
+                        "type": "text",
+                        "label": "(V)"
+                    },
+                    {
+                        "name": "22",
+                        "type": "text",
+                        "label": "(W)"
+                    },
+                    {
+                        "name": "23",
+                        "type": "text",
+                        "label": "(X)"
+                    },
+                    {
+                        "name": "24",
+                        "type": "text",
+                        "label": "(Y)"
+                    },
+                    {
+                        "name": "25",
+                        "type": "text",
+                        "label": "(Z)"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "google-sheets:filterRows",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": null
+            },
+            "mapper": {
+                "from": "drive",
+                "sheetId": "Rechtsregeln",
+                "sortOrder": "asc",
+                "spreadsheetId": "YOUR_SPREADSHEET_ID",
+                "tableFirstRow": "A1:Z1",
+                "includesHeaders": true,
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "Load invoice requirements"
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "Select from My Drive"
+                        },
+                        "orderBy": {
+                            "mode": "chose"
+                        },
+                        "sheetId": {
+                            "mode": "chose",
+                            "label": "Rechtsregeln"
+                        },
+                        "sortOrder": {
+                            "mode": "chose",
+                            "label": "Ascending"
+                        },
+                        "spreadsheetId": {
+                            "mode": "chose",
+                            "label": "Invoice Review Data"
+                        },
+                        "tableFirstRow": {
+                            "label": "A-Z"
+                        },
+                        "includesHeaders": {
+                            "mode": "chose",
+                            "label": "Yes"
+                        },
+                        "valueRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted value"
+                        },
+                        "dateTimeRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted string"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "Google connection"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "valueRenderOption",
+                        "type": "select",
+                        "label": "Value render option",
+                        "validate": {
+                            "enum": [
+                                "FORMATTED_VALUE",
+                                "UNFORMATTED_VALUE",
+                                "FORMULA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "dateTimeRenderOption",
+                        "type": "select",
+                        "label": "Date and time render option",
+                        "validate": {
+                            "enum": [
+                                "SERIAL_NUMBER",
+                                "FORMATTED_STRING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit"
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "select",
+                        "label": "Spreadsheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tableFirstRow",
+                        "type": "select",
+                        "label": "Column range",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "A1:Z1",
+                                "A1:BZ1",
+                                "A1:CZ1",
+                                "A1:DZ1",
+                                "A1:MZ1",
+                                "A1:ZZ1",
+                                "A1:AZZ1",
+                                "A1:BZZ1",
+                                "A1:CZZ1",
+                                "A1:DZZ1",
+                                "A1:MZZ1",
+                                "A1:ZZZ1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "type": "filter",
+                        "label": "Filter",
+                        "options": "rpc://google-sheets/2/rpcGetFilterKeys?includesHeaders=true"
+                    },
+                    {
+                        "name": "orderBy",
+                        "type": "select",
+                        "label": "Order by"
+                    },
+                    {
+                        "name": "sortOrder",
+                        "type": "select",
+                        "label": "Sort order",
+                        "validate": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__IMTLENGTH__",
+                        "type": "uinteger",
+                        "label": "Total number of bundles"
+                    },
+                    {
+                        "name": "__IMTINDEX__",
+                        "type": "uinteger",
+                        "label": "Bundle order position"
+                    },
+                    {
+                        "name": "__ROW_NUMBER__",
+                        "type": "number",
+                        "label": "Row number"
+                    },
+                    {
+                        "name": "__SPREADSHEET_ID__",
+                        "type": "text",
+                        "label": "Spreadsheet ID"
+                    },
+                    {
+                        "name": "__SHEET__",
+                        "type": "text",
+                        "label": "Sheet"
+                    },
+                    {
+                        "name": "0",
+                        "type": "text",
+                        "label": "ID (A)"
+                    },
+                    {
+                        "name": "1",
+                        "type": "text",
+                        "label": "Regelbezeichnung (B)"
+                    },
+                    {
+                        "name": "2",
+                        "type": "text",
+                        "label": "Pflichtangabe nach § 14 UStG (C)"
+                    },
+                    {
+                        "name": "3",
+                        "type": "text",
+                        "label": "(D)"
+                    },
+                    {
+                        "name": "4",
+                        "type": "text",
+                        "label": "(E)"
+                    },
+                    {
+                        "name": "5",
+                        "type": "text",
+                        "label": "(F)"
+                    },
+                    {
+                        "name": "6",
+                        "type": "text",
+                        "label": "(G)"
+                    },
+                    {
+                        "name": "7",
+                        "type": "text",
+                        "label": "(H)"
+                    },
+                    {
+                        "name": "8",
+                        "type": "text",
+                        "label": "(I)"
+                    },
+                    {
+                        "name": "9",
+                        "type": "text",
+                        "label": "(J)"
+                    },
+                    {
+                        "name": "10",
+                        "type": "text",
+                        "label": "(K)"
+                    },
+                    {
+                        "name": "11",
+                        "type": "text",
+                        "label": "(L)"
+                    },
+                    {
+                        "name": "12",
+                        "type": "text",
+                        "label": "(M)"
+                    },
+                    {
+                        "name": "13",
+                        "type": "text",
+                        "label": "(N)"
+                    },
+                    {
+                        "name": "14",
+                        "type": "text",
+                        "label": "(O)"
+                    },
+                    {
+                        "name": "15",
+                        "type": "text",
+                        "label": "(P)"
+                    },
+                    {
+                        "name": "16",
+                        "type": "text",
+                        "label": "(Q)"
+                    },
+                    {
+                        "name": "17",
+                        "type": "text",
+                        "label": "(R)"
+                    },
+                    {
+                        "name": "18",
+                        "type": "text",
+                        "label": "(S)"
+                    },
+                    {
+                        "name": "19",
+                        "type": "text",
+                        "label": "(T)"
+                    },
+                    {
+                        "name": "20",
+                        "type": "text",
+                        "label": "(U)"
+                    },
+                    {
+                        "name": "21",
+                        "type": "text",
+                        "label": "(V)"
+                    },
+                    {
+                        "name": "22",
+                        "type": "text",
+                        "label": "(W)"
+                    },
+                    {
+                        "name": "23",
+                        "type": "text",
+                        "label": "(X)"
+                    },
+                    {
+                        "name": "24",
+                        "type": "text",
+                        "label": "(Y)"
+                    },
+                    {
+                        "name": "25",
+                        "type": "text",
+                        "label": "(Z)"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "module": "util:TextAggregator",
+            "version": 1,
+            "parameters": {
+                "feeder": 4,
+                "rowSeparator": "\n"
+            },
+            "mapper": {
+                "value": "{{4.`0`}}: {{4.`1`}}: {{4.`2`}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": 0,
+                    "name": "Aggregate invoice requirements"
+                },
+                "restore": {
+                    "extra": {
+                        "feeder": {
+                            "label": "Google Sheets - Search Rows [4]"
+                        }
+                    },
+                    "parameters": {
+                        "rowSeparator": {
+                            "label": "New row"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "rowSeparator",
+                        "type": "select",
+                        "label": "Row separator",
+                        "validate": {
+                            "enum": [
+                                "\n",
+                                "\t",
+                                "other"
+                            ]
+                        }
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Text"
+                    }
+                ],
+                "advanced": true
+            }
+        },
+        {
+            "id": 6,
+            "module": "openai-gpt-3:askAnything",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "model": "gpt-5-nano",
+                "textPrompt": "Prüfe die folgende Rechnung in zwei Bereichen:\n\n1. Rechtliche Pflichtangaben\n2. Übereinstimmung des Rechnungsabsenders mit dem Lieferanten aus dem Auftrag\n\nNutze dafür ausschließlich die bereitgestellten Daten. Fehlende Informationen dürfen nicht ergänzt oder vermutet werden.\n\nRechnungstext:\n{{1.`6`}}\n\nAbsender laut Rechnung:\n{{1.`2`}}\n\nErwarteter Lieferant laut Auftrag:\n{{2.`1`}}\n\nRechtsregeln:\n{{`5`}}\n\nRechtsprüfung\n\nPrüfe den Rechnungstext anhand der Regeln R1 bis R10.\n\nlegal_ok darf nur true sein, wenn alle zehn Pflichtangaben vorhanden sind. Fehlt mindestens eine Angabe, muss das Ergebnis false sein.\n\nFür R5 genügt eine eindeutige Rechnungsnummer. Ob diese tatsächlich fortlaufend vergeben wurde, kann anhand einer einzelnen Rechnung nicht überprüft werden.\n\nFür R7 ist ein Leistungsdatum oder ein Leistungszeitraum erforderlich. Das Rechnungsdatum allein reicht dafür nicht aus.\n\nFasse das Ergebnis in legal_reason kurz und nachvollziehbar zusammen. Nenne bei einer fehlerhaften Rechnung die fehlenden Angaben und die zugehörigen Regeln.\n\nIdentitätsprüfung\n\nVergleiche den Rechnungsabsender mit dem erwarteten Lieferanten aus dem Auftrag.\n\nUnterschiede bei Groß- und Kleinschreibung, Leerzeichen sowie Schreibweisen wie ae/ä, oe/ö, ue/ü und ss/ß gelten nicht als Abweichung.\n\nWenn die Namen nach dieser Normalisierung übereinstimmen, beträgt der identity_score 100.\n\nFehlt beim Rechnungsabsender eine Rechtsform, die im erwarteten Lieferantennamen enthalten ist, darf der Score höchstens 85 betragen. Enthält auch der erwartete Lieferantenname keine Rechtsform, soll keine Rechtsform vorausgesetzt werden.\n\nBegründe den Score in identity_reason kurz und verständlich.\n\nDie Rechnungsmenge wird separat durch eine feste Logik in Make geprüft und gehört nicht zu dieser Bewertung.\n\nAusgabe\n\nGib ausschließlich gültiges JSON in dieser Struktur aus:\n\n{\n\"legal_ok\": true,\n\"legal_reason\": \"Kurze Begründung\",\n\"identity_score\": 100,\n\"identity_reason\": \"Kurze Begründung\"\n}\n\nGib keinen weiteren Text und keine Markdown-Formatierung vor oder nach dem JSON aus.\n"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1200,
+                    "y": 0,
+                    "name": "Review requirements & supplier match"
+                },
+                "restore": {
+                    "expect": {
+                        "model": {
+                            "label": "GPT-5 nanoThe most cost-effective option for casual conversation and straightforward, simple fact-retrieval"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "gpt-5-nano",
+                                "gpt-6-astra",
+                                "gpt-5.6-sol",
+                                "gpt-5.6-terra",
+                                "gpt-5.6-luna",
+                                "gpt-5.5",
+                                "gpt-5.4-nano",
+                                "gpt-5.4-mini",
+                                "gpt-5.4",
+                                "gpt-5.2",
+                                "gpt-5.1",
+                                "gpt-5",
+                                "gpt-5-mini"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "textPrompt",
+                        "type": "text",
+                        "label": "Text prompt",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 7,
+            "module": "json:ParseJSON",
+            "version": 1,
+            "parameters": {
+                "type": 583048
+            },
+            "mapper": {
+                "json": "{{6.result}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1500,
+                    "y": 0,
+                    "name": "Parse AI response"
+                },
+                "restore": {
+                    "parameters": {
+                        "type": {
+                            "label": "Invoice Check Result"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "type",
+                        "type": "udt",
+                        "label": "Data structure"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "json",
+                        "type": "text",
+                        "label": "JSON string",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "help": "",
+                        "name": "legal_ok",
+                        "type": "boolean",
+                        "label": "Legal ok"
+                    },
+                    {
+                        "help": "",
+                        "name": "legal_reason",
+                        "type": "text",
+                        "label": "Legal reason"
+                    },
+                    {
+                        "help": "",
+                        "name": "identity_score",
+                        "type": "number",
+                        "label": "Identity score"
+                    },
+                    {
+                        "help": "",
+                        "name": "identity_reason",
+                        "type": "text",
+                        "label": "Identity reason"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "Mengenpruefung",
+                "scope": "roundtrip",
+                "value": "{{if(1.`4` = 2.`3`; \"OK\"; \"FAIL\")}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1800,
+                    "y": 0,
+                    "name": "Compare quantities"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "Mengenpruefung",
+                        "type": "any",
+                        "label": "Mengenpruefung"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 9,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "Entscheidung",
+                "scope": "roundtrip",
+                "value": "{{if(7.legal_ok = true & 7.identity_score >= 90 & 8.Mengenpruefung = \"OK\"; \"Freigabe\"; \"Ablehnung\")}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2100,
+                    "y": 0,
+                    "name": "Apply approval rules"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "Entscheidung",
+                        "type": "any",
+                        "label": "Entscheidung"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "Manuelle_Pruefung",
+                "scope": "roundtrip",
+                "value": "{{if(7.identity_score < 90; \"Ja\"; \"Nein\")}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2400,
+                    "y": 0,
+                    "name": "Flag manual review"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "Manuelle_Pruefung",
+                        "type": "any",
+                        "label": "Manuelle_Pruefung"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 11,
+            "module": "google-sheets:updateRow",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": null
+            },
+            "mapper": {
+                "from": "drive",
+                "mode": "select",
+                "values": {
+                    "0": "{{1.`0`}}",
+                    "1": "{{1.`1`}}",
+                    "2": "{{1.`2`}}",
+                    "3": "{{1.`3`}}",
+                    "4": "{{1.`4`}}",
+                    "5": "{{1.`5`}}",
+                    "6": "{{1.`6`}}",
+                    "7": "{{7.legal_ok}}",
+                    "8": "{{7.identity_score}}",
+                    "9": "{{8.Mengenpruefung}}",
+                    "10": "{{9.Entscheidung}}",
+                    "11": "Rechtsprüfung: {{7.legal_reason}}\nIdentität: {{7.identity_score}} von 100 \nIdentitätsprüfung: {{7.identity_reason}}\nMengenprüfung: {{8.Mengenpruefung}}, Ist: {{1.`4`}}, Soll: {{2.`3`}}",
+                    "12": "{{10.Manuelle_Pruefung}}",
+                    "13": "{{formatDate(now; \"DD.MM.YYYY HH:mm\"; \"Europe/Berlin\")}}"
+                },
+                "sheetId": "Rechnungen",
+                "rowNumber": "{{1.`__ROW_NUMBER__`}}",
+        "spreadsheetId": "YOUR_SPREADSHEET_ID",
+                "includesHeaders": true,
+                "useColumnHeaders": false,
+                "valueInputOption": "USER_ENTERED"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2700,
+                    "y": 0,
+                    "name": "Update invoice record"
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "My Drive"
+                        },
+                        "mode": {
+                            "label": "Search by path"
+                        },
+                        "sheetId": {
+                            "label": "Rechnungen"
+                        },
+                        "spreadsheetId": {
+                            "path": [
+                                "Invoice Review Data"
+                            ]
+                        },
+                        "includesHeaders": {
+                            "label": "Yes"
+                        },
+                        "useColumnHeaders": {
+                            "label": "No"
+                        },
+                        "valueInputOption": {
+                            "mode": "chose",
+                            "label": "User entered"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "Google connection"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "mode",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "select",
+                                "fromAll",
+                                "map"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "valueInputOption",
+                        "type": "select",
+                        "label": "Value input option",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "USER_ENTERED",
+                                "RAW"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Drive",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "file",
+                        "label": "Spreadsheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "rowNumber",
+                        "type": "uinteger",
+                        "label": "Row number",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "select",
+                        "label": "Table contains headers",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "useColumnHeaders",
+                        "type": "select",
+                        "label": "Use column headers as IDs of the columns",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                true,
+                                false
+                            ]
+                        }
+                    },
+                    {
+                        "name": "values",
+                        "spec": [
+                            {
+                                "name": "0",
+                                "type": "text",
+                                "label": "Case_ID (A)"
+                            },
+                            {
+                                "name": "1",
+                                "type": "text",
+                                "label": "Rechnungs_Nr (B)"
+                            },
+                            {
+                                "name": "2",
+                                "type": "text",
+                                "label": "Absender_Name (C)"
+                            },
+                            {
+                                "name": "3",
+                                "type": "text",
+                                "label": "Bezogene_Auftrags_ID (D)"
+                            },
+                            {
+                                "name": "4",
+                                "type": "text",
+                                "label": "Ist_Menge (E)"
+                            },
+                            {
+                                "name": "5",
+                                "type": "text",
+                                "label": "Summe_Netto (F)"
+                            },
+                            {
+                                "name": "6",
+                                "type": "text",
+                                "label": "Rechnungstext (G)"
+                            },
+                            {
+                                "name": "7",
+                                "type": "text",
+                                "label": "Rechtspruefung (H)"
+                            },
+                            {
+                                "name": "8",
+                                "type": "text",
+                                "label": "Identitaets_Score (I)"
+                            },
+                            {
+                                "name": "9",
+                                "type": "text",
+                                "label": "Mengenpruefung (J)"
+                            },
+                            {
+                                "name": "10",
+                                "type": "text",
+                                "label": "Entscheidung (K)"
+                            },
+                            {
+                                "name": "11",
+                                "type": "text",
+                                "label": "Entscheidungsgrund (L)"
+                            },
+                            {
+                                "name": "12",
+                                "type": "text",
+                                "label": "Manuelle_Pruefung (M)"
+                            },
+                            {
+                                "name": "13",
+                                "type": "text",
+                                "label": "Geprueft_am (N)"
+                            },
+                            {
+                                "name": "14",
+                                "type": "text",
+                                "label": "(O)"
+                            },
+                            {
+                                "name": "15",
+                                "type": "text",
+                                "label": "(P)"
+                            },
+                            {
+                                "name": "16",
+                                "type": "text",
+                                "label": "(Q)"
+                            },
+                            {
+                                "name": "17",
+                                "type": "text",
+                                "label": "(R)"
+                            },
+                            {
+                                "name": "18",
+                                "type": "text",
+                                "label": "(S)"
+                            },
+                            {
+                                "name": "19",
+                                "type": "text",
+                                "label": "(T)"
+                            },
+                            {
+                                "name": "20",
+                                "type": "text",
+                                "label": "(U)"
+                            },
+                            {
+                                "name": "21",
+                                "type": "text",
+                                "label": "(V)"
+                            },
+                            {
+                                "name": "22",
+                                "type": "text",
+                                "label": "(W)"
+                            },
+                            {
+                                "name": "23",
+                                "type": "text",
+                                "label": "(X)"
+                            },
+                            {
+                                "name": "24",
+                                "type": "text",
+                                "label": "(Y)"
+                            },
+                            {
+                                "name": "25",
+                                "type": "text",
+                                "label": "(Z)"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Values in columns",
+                        "metadata": [
+                            [
+                                [
+                                    "Case_ID",
+                                    "Rechnungs_Nr",
+                                    "Absender_Name",
+                                    "Bezogene_Auftrags_ID",
+                                    "Ist_Menge",
+                                    "Summe_Netto",
+                                    "Rechnungstext",
+                                    "Rechtspruefung",
+                                    "Identitaets_Score",
+                                    "Mengenpruefung",
+                                    "Entscheidung",
+                                    "Entscheidungsgrund",
+                                    "Manuelle_Pruefung",
+                                    "Geprueft_am"
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}
